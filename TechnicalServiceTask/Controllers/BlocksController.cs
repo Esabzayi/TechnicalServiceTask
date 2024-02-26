@@ -1,35 +1,30 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using TechnicalServiceTask.Controllers;
 using TechnicalServiceTask.Models;
+using TechnicalServiceTask.Services;
 
-[Authorize]
 [ApiController]
 [Route("api/blocks")]
-public class BlocksController : ControllerBase
+public class BlocksController : BaseController
 {
-    private readonly AppEntity _context;
+    private readonly BlockService _blockService;
 
-    public BlocksController(AppEntity context)
+    public BlocksController(BaseService baseService, BlockService blockService) : base(baseService)
     {
-        _context = context;
+        _blockService = blockService;
     }
 
-    // GET: api/blocks
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Block>>> GetBlocks()
+    public async Task<ActionResult<IEnumerable<BlockViewModel>>> GetBlocks()
     {
-        return await _context.Blocks.ToListAsync();
+        var blocks = await _blockService.GetBlockViewModels();
+        return Ok(blocks);
     }
 
-    // GET: api/blocks/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Block>> GetBlock(int id)
+    public async Task<ActionResult<BlockViewModel>> GetBlock(int id)
     {
-        var block = await _context.Blocks.FindAsync(id);
+        var block = await _blockService.GetBlockViewModelById(id);
 
         if (block == null)
         {
@@ -39,60 +34,24 @@ public class BlocksController : ControllerBase
         return block;
     }
 
-    // POST: api/blocks
     [HttpPost]
-    public async Task<ActionResult<Block>> CreateBlock([FromBody] Block block)
+    public async Task<ActionResult<BlockViewModel>> CreateBlock([FromBody] BlockViewModel blockViewModel)
     {
-        _context.Blocks.Add(block);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetBlock), new { id = block.Id }, block);
+        var createdBlock = await _blockService.CreateBlock(blockViewModel);
+        return CreatedAtAction(nameof(GetBlock), new { id = createdBlock.Id }, createdBlock);
     }
 
-    // PUT: api/blocks/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBlock(int id, [FromBody] Block block)
+    public async Task<IActionResult> UpdateBlock(int id, [FromBody] BlockViewModel blockViewModel)
     {
-        if (id != block.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(block).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Blocks.Any(b => b.Id == id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await _blockService.UpdateBlock(id, blockViewModel);
         return NoContent();
     }
 
-    // DELETE: api/blocks/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBlock(int id)
     {
-        var block = await _context.Blocks.FindAsync(id);
-
-        if (block == null)
-        {
-            return NotFound();
-        }
-
-        _context.Blocks.Remove(block);
-        await _context.SaveChangesAsync();
-
+        await _blockService.DeleteBlock(id);
         return NoContent();
     }
 }

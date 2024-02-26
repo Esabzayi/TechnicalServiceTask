@@ -2,15 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using TechnicalServiceTask.Data;
 using TechnicalServiceTask.Models;
 
-namespace TechnicalServiceTask.Controllers
+namespace TechnicalServiceTask.Controllers.jwtAuth
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +23,7 @@ namespace TechnicalServiceTask.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationModel model)
+        public async Task<IActionResult> Register([FromBody] UserViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +55,7 @@ namespace TechnicalServiceTask.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] userLoginModel model)
+        public async Task<IActionResult> Login([FromBody] UserViewModel model)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == model.Username);
 
@@ -96,13 +94,13 @@ namespace TechnicalServiceTask.Controllers
 
         private string HashPassword(string password)
         {
-            
+
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         private bool VerifyPassword(string inputPassword, string hashedPassword)
         {
-            
+
             return BCrypt.Net.BCrypt.Verify(inputPassword, hashedPassword);
         }
     }

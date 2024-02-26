@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TechnicalServiceTask.Models;
+using TechnicalServiceTask.Data;
 
 #nullable disable
 
 namespace TechnicalServiceTask.Migrations
 {
     [DbContext(typeof(AppEntity))]
-    [Migration("20240220093540_Auth")]
-    partial class Auth
+    [Migration("20240226074426_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace TechnicalServiceTask.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Activity", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Activity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,7 +47,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Block", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Block", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,7 +77,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Blocks");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Employee", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,7 +114,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("ResponsiblePersons");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.System", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.System", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,7 +149,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Systems");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.TechnicalRequest", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,7 +162,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("TechnicalRequests");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.TechnicalService", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalService", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +197,7 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("TechnicalServices");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.User", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,41 +218,41 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Activity", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Activity", b =>
                 {
-                    b.HasOne("TechnicalServiceTask.Models.TechnicalService", null)
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
                         .WithMany("Activities")
                         .HasForeignKey("TechnicalServiceId");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Block", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Block", b =>
                 {
-                    b.HasOne("TechnicalServiceTask.Models.TechnicalService", null)
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
                         .WithMany("Blocks")
                         .HasForeignKey("TechnicalServiceId");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.Employee", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.Employee", b =>
                 {
-                    b.HasOne("TechnicalServiceTask.Models.TechnicalService", null)
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
                         .WithMany("Employees")
                         .HasForeignKey("TechnicalServiceId");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.System", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.System", b =>
                 {
-                    b.HasOne("TechnicalServiceTask.Models.System", "ParentSystem")
+                    b.HasOne("TechnicalServiceTask.Data.System", "ParentSystem")
                         .WithMany()
                         .HasForeignKey("ParentSystemId");
 
-                    b.HasOne("TechnicalServiceTask.Models.TechnicalService", null)
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
                         .WithMany("Systems")
                         .HasForeignKey("TechnicalServiceId");
 
                     b.Navigation("ParentSystem");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Models.TechnicalService", b =>
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalService", b =>
                 {
                     b.Navigation("Activities");
 

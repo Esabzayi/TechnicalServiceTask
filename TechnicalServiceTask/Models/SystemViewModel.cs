@@ -1,14 +1,11 @@
-﻿using System.Text.Json.Serialization;
-
-namespace TechnicalServiceTask.Models
+﻿namespace TechnicalServiceTask.Models
 {
-    public class System
+    public class SystemViewModel
     {
-     
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public int? ParentSystemId { get; set; }
-        public System? ParentSystem { get; set; }
+        public SystemViewModel? ParentSystem { get; set; }
     }
 }

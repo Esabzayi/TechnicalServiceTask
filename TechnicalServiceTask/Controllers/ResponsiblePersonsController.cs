@@ -1,102 +1,57 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using TechnicalServiceTask.Controllers;
 using TechnicalServiceTask.Models;
-[Authorize]
+using TechnicalServiceTask.Services;
+
 [ApiController]
 [Route("api/responsiblepersons")]
-public class ResponsiblePersonsController : ControllerBase
+public class ResponsiblePersonsController : BaseController
 {
-    private readonly AppEntity _context;
+    private readonly EmployeeService _employeeService;
 
-    public ResponsiblePersonsController(AppEntity context)
+    public ResponsiblePersonsController(BaseService baseService, EmployeeService employeeService) : base(baseService)
     {
-        _context = context;
+        _employeeService = employeeService;
     }
 
-    // GET: api/responsiblepersons
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Employee>>> GetResponsiblePersons()
+    public async Task<ActionResult<IEnumerable<EmployeeViewModel>>> GetResponsiblePersons()
     {
-        return await _context.ResponsiblePersons.ToListAsync();
+        var employees = await _employeeService.GetResponsiblePersonsViewModels();
+        return Ok(employees);
     }
 
-    // GET: api/responsiblepersons/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Employee>> GetResponsiblePerson(int id)
+    public async Task<ActionResult<EmployeeViewModel>> GetResponsiblePerson(int id)
     {
-        var responsiblePerson = await _context.ResponsiblePersons.FindAsync(id);
+        var employee = await _employeeService.GetResponsiblePersonViewModelById(id);
 
-        if (responsiblePerson == null)
+        if (employee == null)
         {
             return NotFound();
         }
 
-        return responsiblePerson;
+        return employee;
     }
 
-    // POST: api/responsiblepersons
     [HttpPost]
-    public async Task<ActionResult<Employee>> CreateResponsiblePerson([FromBody] Employee responsiblePerson)
+    public async Task<ActionResult<EmployeeViewModel>> CreateResponsiblePerson([FromBody] EmployeeViewModel employeeViewModel)
     {
-        _context.ResponsiblePersons.Add(responsiblePerson);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetResponsiblePerson), new { id = responsiblePerson.Id }, responsiblePerson);
+        var createdEmployee = await _employeeService.CreateResponsiblePerson(employeeViewModel);
+        return CreatedAtAction(nameof(GetResponsiblePerson), new { id = createdEmployee.Id }, createdEmployee);
     }
 
-    // PUT: api/responsiblepersons/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateResponsiblePerson(int id, [FromBody] Employee responsiblePerson)
+    public async Task<IActionResult> UpdateResponsiblePerson(int id, [FromBody] EmployeeViewModel employeeViewModel)
     {
-        if (id != responsiblePerson.Id)
-        {
-            return BadRequest();
-        }
-
-        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-        {
-            // Log or print the error messages
-            Console.WriteLine($"ModelState Error: {error.ErrorMessage}");
-        }
-        _context.Entry(responsiblePerson).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.ResponsiblePersons.Any(rp => rp.Id == id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await _employeeService.UpdateResponsiblePerson(id, employeeViewModel);
         return NoContent();
     }
 
-    // DELETE: api/responsiblepersons/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteResponsiblePerson(int id)
     {
-        var responsiblePerson = await _context.ResponsiblePersons.FindAsync(id);
-
-        if (responsiblePerson == null)
-        {
-            return NotFound();
-        }
-
-        _context.ResponsiblePersons.Remove(responsiblePerson);
-        await _context.SaveChangesAsync();
-
+        await _employeeService.DeleteResponsiblePerson(id);
         return NoContent();
     }
 }

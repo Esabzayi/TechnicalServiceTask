@@ -1,34 +1,31 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using TechnicalServiceTask.Controllers;
 using TechnicalServiceTask.Models;
-[Authorize]
+using TechnicalServiceTask.Services;
+
+
 [ApiController]
 [Route("api/systems")]
-public class SystemsController : ControllerBase
+public class SystemsController : BaseController
 {
-    private readonly AppEntity _context;
+    private readonly SystemService _systemService;
 
-    public SystemsController(AppEntity context)
+    public SystemsController(BaseService baseService, SystemService systemService) : base(baseService)
     {
-        _context = context;
+        _systemService = systemService;
     }
 
-    // GET: api/systems
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TechnicalServiceTask.Models.System>>> GetSystems()
+    public async Task<ActionResult<IEnumerable<SystemViewModel>>> GetSystems()
     {
-        return await _context.Systems.ToListAsync();
+        var systems = await _systemService.GetSystemsViewModels();
+        return Ok(systems);
     }
 
-    // GET: api/systems/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<TechnicalServiceTask.Models.System>> GetSystem(int id)
+    public async Task<ActionResult<SystemViewModel>> GetSystem(int id)
     {
-        var system = await _context.Systems.FindAsync(id);
+        var system = await _systemService.GetSystemViewModelById(id);
 
         if (system == null)
         {
@@ -38,60 +35,24 @@ public class SystemsController : ControllerBase
         return system;
     }
 
-    // POST: api/systems
     [HttpPost]
-    public async Task<ActionResult<TechnicalServiceTask.Models.System>> CreateSystem([FromBody] TechnicalServiceTask.Models.System system)
+    public async Task<ActionResult<SystemViewModel>> CreateSystem([FromBody] SystemViewModel systemViewModel)
     {
-        _context.Systems.Add(system);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetSystem), new { id = system.Id }, system);
+        var createdSystem = await _systemService.CreateSystem(systemViewModel);
+        return CreatedAtAction(nameof(GetSystem), new { id = createdSystem.Id }, createdSystem);
     }
 
-    // PUT: api/systems/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateSystem(int id, [FromBody] TechnicalServiceTask.Models.System system)
+    public async Task<IActionResult> UpdateSystem(int id, [FromBody] SystemViewModel systemViewModel)
     {
-        if (id != system.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(system).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Systems.Any(s => s.Id == id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await _systemService.UpdateSystem(id, systemViewModel);
         return NoContent();
     }
 
-    // DELETE: api/systems/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSystem(int id)
     {
-        var system = await _context.Systems.FindAsync(id);
-
-        if (system == null)
-        {
-            return NotFound();
-        }
-
-        _context.Systems.Remove(system);
-        await _context.SaveChangesAsync();
-
+        await _systemService.DeleteSystem(id);
         return NoContent();
     }
 }

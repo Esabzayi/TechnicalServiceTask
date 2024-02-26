@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TechnicalServiceTask.Models
+namespace TechnicalServiceTask.Data
 {
     public class TechnicalService
     {
-       
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using TechnicalServiceTask.Models;
+using TechnicalServiceTask.Data;
+using TechnicalServiceTask.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,11 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddDbContext<AppEntity>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<BaseService>();
+builder.Services.AddScoped<BlockService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<SystemService>();
+builder.Services.AddScoped<TechnicalServiceService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

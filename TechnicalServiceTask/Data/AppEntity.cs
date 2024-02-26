@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace TechnicalServiceTask.Models
+namespace TechnicalServiceTask.Data
 {
     public class AppEntity : DbContext
     {
@@ -14,7 +14,7 @@ namespace TechnicalServiceTask.Models
 
         public AppEntity(DbContextOptions<AppEntity> options) : base(options)
         {
-           
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,7 +57,7 @@ namespace TechnicalServiceTask.Models
             modelBuilder.Entity<System>()
                 .Property(s => s.Code)
                 .HasMaxLength(10);
-               
+
 
             modelBuilder.Entity<Employee>()
                 .HasKey(rp => rp.Id);
@@ -84,7 +84,7 @@ namespace TechnicalServiceTask.Models
             modelBuilder.Entity<TechnicalRequest>()
                 .HasKey(tr => tr.Id);
 
-            
+
         }
     }
 }
