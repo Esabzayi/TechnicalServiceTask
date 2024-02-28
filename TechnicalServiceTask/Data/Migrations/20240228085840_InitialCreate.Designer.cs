@@ -12,7 +12,7 @@ using TechnicalServiceTask.Data;
 namespace TechnicalServiceTask.Migrations
 {
     [DbContext(typeof(AppEntity))]
-    [Migration("20240226074426_InitialCreate")]
+    [Migration("20240228085840_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,7 +37,7 @@ namespace TechnicalServiceTask.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TechnicalServiceId")
+                    b.Property<int>("TechnicalServiceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -149,19 +149,6 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Systems");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TechnicalRequests");
-                });
-
             modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalService", b =>
                 {
                     b.Property<int>("Id")
@@ -197,6 +184,36 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("TechnicalServices");
                 });
 
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalServiceBlock", b =>
+                {
+                    b.Property<int>("TechnicalServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TechnicalServiceId", "BlockId");
+
+                    b.HasIndex("BlockId");
+
+                    b.ToTable("TechnicalServiceBlocks");
+                });
+
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalServiceSystem", b =>
+                {
+                    b.Property<int>("TechnicalServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TechnicalServiceId", "SystemId");
+
+                    b.HasIndex("SystemId");
+
+                    b.ToTable("TechnicalServiceSystems");
+                });
+
             modelBuilder.Entity("TechnicalServiceTask.Data.User", b =>
                 {
                     b.Property<int>("Id")
@@ -222,7 +239,9 @@ namespace TechnicalServiceTask.Migrations
                 {
                     b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
                         .WithMany("Activities")
-                        .HasForeignKey("TechnicalServiceId");
+                        .HasForeignKey("TechnicalServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TechnicalServiceTask.Data.Block", b =>
@@ -252,6 +271,44 @@ namespace TechnicalServiceTask.Migrations
                     b.Navigation("ParentSystem");
                 });
 
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalServiceBlock", b =>
+                {
+                    b.HasOne("TechnicalServiceTask.Data.Block", "Block")
+                        .WithMany()
+                        .HasForeignKey("BlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", "TechnicalService")
+                        .WithMany("TechnicalServiceBlocks")
+                        .HasForeignKey("TechnicalServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Block");
+
+                    b.Navigation("TechnicalService");
+                });
+
+            modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalServiceSystem", b =>
+                {
+                    b.HasOne("TechnicalServiceTask.Data.System", "System")
+                        .WithMany()
+                        .HasForeignKey("SystemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", "TechnicalService")
+                        .WithMany("TechnicalServiceSystems")
+                        .HasForeignKey("TechnicalServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("System");
+
+                    b.Navigation("TechnicalService");
+                });
+
             modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalService", b =>
                 {
                     b.Navigation("Activities");
@@ -261,6 +318,10 @@ namespace TechnicalServiceTask.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Systems");
+
+                    b.Navigation("TechnicalServiceBlocks");
+
+                    b.Navigation("TechnicalServiceSystems");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,13 +4,15 @@ namespace TechnicalServiceTask.Data
 {
     public class AppEntity : DbContext
     {
+        public DbSet<TechnicalServiceBlock> TechnicalServiceBlocks { get; set; }
+        public DbSet<TechnicalServiceSystem> TechnicalServiceSystems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TechnicalService> TechnicalServices { get; set; }
         public DbSet<Block> Blocks { get; set; }
         public DbSet<System> Systems { get; set; }
         public DbSet<Employee> ResponsiblePersons { get; set; }
         public DbSet<Activity> Activities { get; set; }
-        public DbSet<TechnicalRequest> TechnicalRequests { get; set; }
+       // public DbSet<TechnicalRequest> TechnicalRequests { get; set; }
 
         public AppEntity(DbContextOptions<AppEntity> options) : base(options)
         {
@@ -81,10 +83,27 @@ namespace TechnicalServiceTask.Data
             modelBuilder.Entity<Activity>()
                 .HasKey(a => a.Id);
 
-            modelBuilder.Entity<TechnicalRequest>()
-                .HasKey(tr => tr.Id);
+           
 
+            modelBuilder.Entity<TechnicalServiceBlock>()
+       .HasKey(tsb => new { tsb.TechnicalServiceId, tsb.BlockId });
 
+            modelBuilder.Entity<TechnicalServiceSystem>()
+                .HasKey(tss => new { tss.TechnicalServiceId, tss.SystemId });
+
+            modelBuilder.Entity<TechnicalServiceBlock>()
+                .HasOne(tsb => tsb.TechnicalService)
+                .WithMany(ts => ts.TechnicalServiceBlocks)
+                .HasForeignKey(tsb => tsb.TechnicalServiceId);
+
+         
+
+            modelBuilder.Entity<TechnicalServiceSystem>()
+                .HasOne(tss => tss.TechnicalService)
+                .WithMany(ts => ts.TechnicalServiceSystems)
+                .HasForeignKey(tss => tss.TechnicalServiceId);
+
+           
         }
     }
 }

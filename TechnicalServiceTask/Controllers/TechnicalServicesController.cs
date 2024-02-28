@@ -82,7 +82,7 @@ public class NewTechnicalServicesController : BaseController
             parsedCreationDate = parsedDate;
         }
 
-        var technicalServiceData = _technicalServiceService.GetTechnicalServiceReport(employeeId, parsedCreationDate, blockCode, systemCode);
+        var technicalServiceData = _technicalServiceService.GetTechnicalServiceReport(employeeId, parsedCreationDate);
 
         return Ok(technicalServiceData);
     }

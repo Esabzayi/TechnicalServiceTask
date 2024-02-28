@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 using TechnicalServiceTask.Data;
 using TechnicalServiceTask.Services;
 
@@ -65,6 +66,13 @@ builder.Services.AddSwaggerGen(c => {
 
 builder.Services.AddDbContext<AppEntity>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
+
 
 builder.Services.AddScoped<BaseService>();
 builder.Services.AddScoped<BlockService>();

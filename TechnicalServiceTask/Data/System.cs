@@ -9,5 +9,7 @@ namespace TechnicalServiceTask.Data
         public string Code { get; set; }
         public int? ParentSystemId { get; set; }
         public System? ParentSystem { get; set; }
+
+       // public ICollection<TechnicalServiceSystem>? TechnicalServiceSystems { get; set; }
     }
 }

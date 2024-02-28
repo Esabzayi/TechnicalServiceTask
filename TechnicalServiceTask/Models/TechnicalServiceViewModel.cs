@@ -14,21 +14,23 @@ namespace TechnicalServiceTask.Models
 
         public int EmployeeIds { get; set; }
 
+        public ICollection<TechnicalServiceViewModel>? TechnicalServiceSystems { get; set; }
+        public ICollection<TechnicalServiceViewModel>? TechnicalServiceBlocks { get; set; }
         public ICollection<BlockViewModel>? Blocks { get; set; }
         public ICollection<SystemViewModel>? Systems { get; set; }
         public ICollection<EmployeeViewModel>? Employees { get; set; }
         public DateTime CreationTime { get; set; }
         public ICollection<Activity> Activities { get; set; }
     }
-    public class TechnicalServiceDto
-    {
-        public int TechnicalServiceId { get; set; }
-        public string TechnicalServiceName { get; set; }
-        public string TechnicalServiceDescription { get; set; }
-        public string ResponsiblePersonName { get; set; }
-        public string BlockCode { get; set; }
-        public string SystemCode { get; set; }
+    //public class TechnicalServiceDto
+    //{
+    //    public int TechnicalServiceId { get; set; }
+    //    public string TechnicalServiceName { get; set; }
+    //    public string TechnicalServiceDescription { get; set; }
+    //    public string ResponsiblePersonName { get; set; }
+    //    public string BlockCode { get; set; }
+    //    public string SystemCode { get; set; }
 
-        public ICollection<Activity> Activities { get; set; }
-    }
+    //    public ICollection<Activity> Activities { get; set; }
+    //}
 }

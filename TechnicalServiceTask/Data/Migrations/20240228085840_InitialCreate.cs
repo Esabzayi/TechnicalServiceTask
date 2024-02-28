@@ -12,18 +12,6 @@ namespace TechnicalServiceTask.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TechnicalRequests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TechnicalRequests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TechnicalServices",
                 columns: table => new
                 {
@@ -61,8 +49,8 @@ namespace TechnicalServiceTask.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TechnicalServiceId = table.Column<int>(type: "int", nullable: true)
+                    TechnicalServiceId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +59,8 @@ namespace TechnicalServiceTask.Migrations
                         name: "FK_Activities_TechnicalServices_TechnicalServiceId",
                         column: x => x.TechnicalServiceId,
                         principalTable: "TechnicalServices",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -144,6 +133,54 @@ namespace TechnicalServiceTask.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TechnicalServiceBlocks",
+                columns: table => new
+                {
+                    TechnicalServiceId = table.Column<int>(type: "int", nullable: false),
+                    BlockId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TechnicalServiceBlocks", x => new { x.TechnicalServiceId, x.BlockId });
+                    table.ForeignKey(
+                        name: "FK_TechnicalServiceBlocks_Blocks_BlockId",
+                        column: x => x.BlockId,
+                        principalTable: "Blocks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TechnicalServiceBlocks_TechnicalServices_TechnicalServiceId",
+                        column: x => x.TechnicalServiceId,
+                        principalTable: "TechnicalServices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TechnicalServiceSystems",
+                columns: table => new
+                {
+                    TechnicalServiceId = table.Column<int>(type: "int", nullable: false),
+                    SystemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TechnicalServiceSystems", x => new { x.TechnicalServiceId, x.SystemId });
+                    table.ForeignKey(
+                        name: "FK_TechnicalServiceSystems_Systems_SystemId",
+                        column: x => x.SystemId,
+                        principalTable: "Systems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TechnicalServiceSystems_TechnicalServices_TechnicalServiceId",
+                        column: x => x.TechnicalServiceId,
+                        principalTable: "TechnicalServices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_TechnicalServiceId",
                 table: "Activities",
@@ -168,6 +205,16 @@ namespace TechnicalServiceTask.Migrations
                 name: "IX_Systems_TechnicalServiceId",
                 table: "Systems",
                 column: "TechnicalServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TechnicalServiceBlocks_BlockId",
+                table: "TechnicalServiceBlocks",
+                column: "BlockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TechnicalServiceSystems_SystemId",
+                table: "TechnicalServiceSystems",
+                column: "SystemId");
         }
 
         /// <inheritdoc />
@@ -177,19 +224,22 @@ namespace TechnicalServiceTask.Migrations
                 name: "Activities");
 
             migrationBuilder.DropTable(
-                name: "Blocks");
-
-            migrationBuilder.DropTable(
                 name: "ResponsiblePersons");
 
             migrationBuilder.DropTable(
-                name: "Systems");
+                name: "TechnicalServiceBlocks");
 
             migrationBuilder.DropTable(
-                name: "TechnicalRequests");
+                name: "TechnicalServiceSystems");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Blocks");
+
+            migrationBuilder.DropTable(
+                name: "Systems");
 
             migrationBuilder.DropTable(
                 name: "TechnicalServices");

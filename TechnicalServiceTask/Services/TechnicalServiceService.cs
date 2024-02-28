@@ -2,11 +2,16 @@
 using TechnicalServiceTask.Data;
 using TechnicalServiceTask.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Data;
 
 namespace TechnicalServiceTask.Services
 {
     public class TechnicalServiceService : BaseService
     {
+
+
         public TechnicalServiceService(AppEntity dbContext) : base(dbContext)
         {
         }
@@ -20,44 +25,95 @@ namespace TechnicalServiceTask.Services
                 .ToListAsync();
         }
 
-        public List<TechnicalServiceDto> GetTechnicalServiceReport(
-            int employeeId = 0,
-            DateTime? parsedCreationDate = null,
-            string blockCode = null,
-            string systemCode = null)
+        public class TechnicalServiceReport
         {
-            var technicalServiceData = _dbContext.TechnicalServices
-                .Where(ts =>
-                    (employeeId == 0 || _dbContext.ResponsiblePersons.Any(rp => rp.Id == ts.Id && rp.Id == employeeId))
-                    && (!parsedCreationDate.HasValue || ts.CreationTime.Date == parsedCreationDate.Value.Date)
-                    && (string.IsNullOrEmpty(blockCode) || _dbContext.Blocks.Any(b => b.Id == ts.Id && b.Code == blockCode))
-                    && (string.IsNullOrEmpty(systemCode) || _dbContext.Systems.Any(s => s.Id == ts.Id && s.Code == systemCode)))
-                .Include(ts => ts.Activities) // Include activities
-                .Join(_dbContext.ResponsiblePersons,
-                    ts => ts.Id,
-                    rp => rp.Id,
-                    (ts, rp) => new { TechnicalService = ts, ResponsiblePerson = rp })
-                .Join(_dbContext.Blocks,
-                    combined => combined.TechnicalService.Id,
-                    b => b.Id,
-                    (combined, b) => new { combined.TechnicalService, combined.ResponsiblePerson, Block = b })
-                .Join(_dbContext.Systems,
-                    combined => combined.TechnicalService.Id,
-                    s => s.Id,
-                    (combined, s) => new TechnicalServiceDto
-                    {
-                        TechnicalServiceId = combined.TechnicalService.Id,
-                        TechnicalServiceName = combined.TechnicalService.Name,
-                        TechnicalServiceDescription = combined.TechnicalService.Description,
-                        ResponsiblePersonName = $"{combined.ResponsiblePerson.FirstName} {combined.ResponsiblePerson.Surname} {combined.ResponsiblePerson.LastName}",
-                        BlockCode = combined.Block.Code,
-                        SystemCode = s.Code,
-                        Activities = combined.TechnicalService.Activities.ToList()
-                    })
+
+            public string TechnicalServiceName { get; set; }
+            public string TechnicalServiceDescription { get; set; }
+            public List<string> BlockCodes { get; set; }
+            public List<string> SystemNames { get; set; }
+
+            public List<string> activity { get; set; }
+            public string ResponsiblePersons { get; set; }
+            public DateTime CreationTime { get; set; }
+        }
+
+        //public List<TechnicalServiceReport> GetTechnicalServiceReport(
+        //    int employeeId = 0,
+        //    DateTime? parsedCreationDate = null,
+        //    string blockCode = null,
+        //    string systemCode = null)
+        //{
+        //    var report = new List<TechnicalServiceReport>();
+        //    var BlockCodeList = new List<string>();
+        //    var SystemCodeList = new List<string>();
+        //    var get_data = _dbContext.TechnicalServices.Where(x => x.EmployeeIds == employeeId).ToList();
+
+        //    foreach (var item in get_data)
+        //    {
+        //        var get_BlockCode = _dbContext.TechnicalServiceBlocks.Where(x => x.TechnicalServiceId == item.Id).ToList();
+        //        foreach (var bc in get_BlockCode)
+        //        {
+        //             BlockCodeList = _dbContext.Blocks.Where(x => x.Id == bc.BlockId).Select(x=>x.Code).ToList();
+        //        }
+        //        var get_SystemCode = _dbContext.TechnicalServiceSystems.Where(x => x.TechnicalServiceId == item.Id).ToList();
+        //        foreach (var sc in get_SystemCode)
+        //        {
+        //            SystemCodeList = _dbContext.Systems.Where(x => x.Id == sc.SystemId).Select(x => x.Code).ToList();
+        //        }
+        //        var get_emp = _dbContext.ResponsiblePersons.Where(x => x.Id == item.EmployeeIds).Select(x=>x).FirstOrDefault();
+        //        if (get_emp!=null)
+        //        {
+        //            report.Add(new TechnicalServiceReport
+        //            {
+        //                TechnicalServiceName = item.Name,
+        //                TechnicalServiceDescription = item.Description,
+        //                BlockCodes = BlockCodeList,
+        //                SystemNames = SystemCodeList,
+        //                ResponsiblePersons = get_emp.FirstName + " " + get_emp.LastName,
+        //                CreationTime = item.CreationTime,
+        //            });
+        //        }
+
+        //    }
+
+        //    return report;
+        //}
+
+        public List<TechnicalServiceReport> GetTechnicalServiceReport(int employeeId = 0, DateTime? parsedCreationDate = null, string blockCode = null, string systemCode = null)
+        {
+            var report = _dbContext.TechnicalServices
+                .Where(x => (employeeId == 0 || x.EmployeeIds == employeeId) &&
+                            (!parsedCreationDate.HasValue || x.CreationTime.Date == parsedCreationDate.Value.Date) &&
+                            (blockCode == null || x.TechnicalServiceBlocks.Any(bc => _dbContext.Blocks.Any(b => b.Id == bc.BlockId && b.Code == blockCode))) &&
+                            (systemCode == null || x.TechnicalServiceSystems.Any(sc => _dbContext.Systems.Any(s => s.Id == sc.SystemId && s.Code == systemCode))))
+                .Select(item => new TechnicalServiceReport
+                {
+                    TechnicalServiceName = item.Name,
+                    TechnicalServiceDescription = item.Description,
+                    BlockCodes = _dbContext.TechnicalServiceBlocks
+                        .Where(bc => bc.TechnicalServiceId == item.Id)
+                        .Join(_dbContext.Blocks, bc => bc.BlockId, b => b.Id, (bc, b) => b.Code)
+                        .ToList(),
+                    SystemNames = _dbContext.TechnicalServiceSystems
+                        .Where(sc => sc.TechnicalServiceId == item.Id)
+                        .Join(_dbContext.Systems, sc => sc.SystemId, s => s.Id, (sc, s) => s.Code)
+                        .ToList(),
+                    ResponsiblePersons = _dbContext.ResponsiblePersons
+                        .Where(rp => rp.Id == item.EmployeeIds)
+                        .Select(rp => rp.FirstName + " " + rp.LastName)
+                        .FirstOrDefault(),
+                    activity = _dbContext.Activities
+                    .Where(at => at.TechnicalServiceId == item.Id)
+                    .Select(at=>at.Name) .ToList(),
+
+                    CreationTime = item.CreationTime,
+                })
                 .ToList();
 
-            return technicalServiceData;
+            return report;
         }
+
 
 
         public async Task<TechnicalService> GetTechnicalServiceById(int id)
@@ -68,6 +124,9 @@ namespace TechnicalServiceTask.Services
                 .Include(ts => ts.Employees)
                 .FirstOrDefaultAsync(ts => ts.Id == id);
         }
+
+
+
 
 
         public async Task<TechnicalService> CreateTechnicalService(TechnicalServiceRequest technicalServiceRequest)
@@ -105,17 +164,38 @@ namespace TechnicalServiceTask.Services
                 Name = technicalServiceRequest.Name,
                 Description = technicalServiceRequest.Description,
                 CreationTime = DateTime.Now,
-                Activities = technicalServiceRequest.Activities, // Assuming these activities are validated
-                BlockIds = technicalServiceRequest.BlockIds,
-                SystemIds = technicalServiceRequest.SystemIds,
                 EmployeeIds = technicalServiceRequest.EmployeeIds,
+                Activities = technicalServiceRequest.Activities
             };
 
             _dbContext.TechnicalServices.Add(technicalService);
             await _dbContext.SaveChangesAsync();
 
+            foreach (var block in existingBlocks)
+            {
+                _dbContext.TechnicalServiceBlocks.Add(new TechnicalServiceBlock { TechnicalServiceId = technicalService.Id, BlockId = block.Id });
+            }
+
+            foreach (var system in existingSystems)
+            {
+                _dbContext.TechnicalServiceSystems.Add(new TechnicalServiceSystem { TechnicalServiceId = technicalService.Id, SystemId = system.Id });
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+
+                ReferenceHandler = ReferenceHandler.Preserve,
+
+            };
+
+            string jsonString = JsonSerializer.Serialize(technicalService, jsonSerializerOptions);
+
             return technicalService;
         }
+
 
 
         public async Task UpdateTechnicalService(int id, TechnicalService technicalService)
