@@ -1,0 +1,1 @@
+You have a large enterprise with multiple systems and blocks and large number of employees. As part of the normal organization in the enterprise, technical requests are created and assigned to different people. A technical request is a task related to the performing of a technical service.
