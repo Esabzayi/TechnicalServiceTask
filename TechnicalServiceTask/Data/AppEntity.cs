@@ -10,9 +10,8 @@ namespace TechnicalServiceTask.Data
         public DbSet<TechnicalService> TechnicalServices { get; set; }
         public DbSet<Block> Blocks { get; set; }
         public DbSet<System> Systems { get; set; }
-        public DbSet<Employee> ResponsiblePersons { get; set; }
-        public DbSet<Activity> Activities { get; set; }
-       // public DbSet<TechnicalRequest> TechnicalRequests { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+     
 
         public AppEntity(DbContextOptions<AppEntity> options) : base(options)
         {
@@ -78,12 +77,7 @@ namespace TechnicalServiceTask.Data
 
             modelBuilder.Entity<Employee>()
                 .Property(rp => rp.PIN)
-                .IsRequired();
-
-            modelBuilder.Entity<Activity>()
-                .HasKey(a => a.Id);
-
-           
+                .IsRequired();        
 
             modelBuilder.Entity<TechnicalServiceBlock>()
        .HasKey(tsb => new { tsb.TechnicalServiceId, tsb.BlockId });
@@ -95,8 +89,6 @@ namespace TechnicalServiceTask.Data
                 .HasOne(tsb => tsb.TechnicalService)
                 .WithMany(ts => ts.TechnicalServiceBlocks)
                 .HasForeignKey(tsb => tsb.TechnicalServiceId);
-
-         
 
             modelBuilder.Entity<TechnicalServiceSystem>()
                 .HasOne(tss => tss.TechnicalService)

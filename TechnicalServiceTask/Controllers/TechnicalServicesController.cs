@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using TechnicalServiceTask.Controllers;
 using TechnicalServiceTask.Data;
@@ -17,74 +16,83 @@ public class NewTechnicalServicesController : BaseController
         _technicalServiceService = technicalServiceService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<TechnicalServiceViewModel>>> GetTechnicalServices()
-    {
-        var technicalServices = await _technicalServiceService.GetTechnicalServices();
-        return Ok(technicalServices);
-    }
-
     [HttpPost]
-    public async Task<ActionResult<TechnicalService>> CreateTechnicalService([FromBody] TechnicalServiceService.TechnicalServiceRequest technicalServiceRequest)
+    public async Task<IActionResult> CreateTechnicalService([FromBody] TechnicalServiceViewModel model)
     {
-        return await _technicalServiceService.CreateTechnicalService(technicalServiceRequest);
+        if (await _technicalServiceService.CreateTechnicalService(model))
+        {
+            return Ok("TechnicalService created successfully");
+        }
+
+        return BadRequest("Failed to create TechnicalService");
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTechnicalService(int id, [FromBody] TechnicalService technicalService)
+    [HttpPut("{technicalServiceId}")]
+    public async Task<IActionResult> UpdateTechnicalService(int technicalServiceId, [FromBody] TechnicalServiceViewModel updatedModel)
     {
-        try
+        if (await _technicalServiceService.UpdateTechnicalService(technicalServiceId, updatedModel))
         {
-            await _technicalServiceService.UpdateTechnicalService(id, technicalService);
-            return NoContent(); 
+            return Ok(); 
         }
-        catch (ArgumentException ex)
-        {
-          
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-           
-            return StatusCode(500, "Internal Server Error");
-        }
+
+        return NotFound(); 
     }
 
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTechnicalService(int id)
+    [HttpGet("{technicalServiceId}")]
+    public async Task<IActionResult> GetTechnicalService(int technicalServiceId)
     {
-        try
+        var technicalServiceViewModel = await _technicalServiceService.GetTechnicalServiceViewModelById(technicalServiceId);
+
+        if (technicalServiceViewModel != null)
         {
-            await _technicalServiceService.DeleteTechnicalService(id);
+            return Ok(technicalServiceViewModel); 
+        }
+
+        return NotFound(); 
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllTechnicalServiceViewModels()
+    {
+        var technicalServiceViewModels = await _technicalServiceService.GetAllTechnicalServiceViewModels();
+
+        return Ok(technicalServiceViewModels); 
+    }
+
+    [HttpDelete("{technicalServiceId}")]
+    public async Task<IActionResult> DeleteTechnicalService(int technicalServiceId)
+    {
+        var isDeleted = await _technicalServiceService.DeleteTechnicalService(technicalServiceId);
+
+        if (isDeleted)
+        {
             return NoContent(); 
         }
-        catch (Exception ex)
-        {
-           
-            return StatusCode(500, "Internal Server Error");
-        }
+
+        return NotFound(); 
     }
 
 
     [HttpGet("report")]
-    public IActionResult GetTechnicalServiceReport(
-     [FromQuery] int employeeId = 0,
-     [FromQuery] string creationDate = null,
-     [FromQuery] string blockCode = null,
-     [FromQuery] string systemCode = null)
+    public async Task<ActionResult<IEnumerable<TechnicalServiceReportViewModel>>> GetTechnicalServiceReport(
+       [FromQuery] string responsiblePersonName,
+       [FromQuery] List<string?> blockCodes,
+       [FromQuery] List<string?> systemCodes,
+       [FromQuery] DateTime? creationDate)
     {
-        DateTime? parsedCreationDate = null;
-
-       
-        if (!string.IsNullOrEmpty(creationDate) && DateTime.TryParseExact(creationDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+        try
         {
-            parsedCreationDate = parsedDate;
+            var report = await _technicalServiceService.GetTechnicalServiceReport(
+                responsiblePersonName,
+                blockCodes,
+                systemCodes,
+                creationDate);
+
+            return Ok(report);
         }
-
-        var technicalServiceData = _technicalServiceService.GetTechnicalServiceReport(employeeId, parsedCreationDate);
-
-        return Ok(technicalServiceData);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
     }
-
 }

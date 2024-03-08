@@ -12,8 +12,8 @@ using TechnicalServiceTask.Data;
 namespace TechnicalServiceTask.Migrations
 {
     [DbContext(typeof(AppEntity))]
-    [Migration("20240228085840_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240308062127_RemovedActivityTable")]
+    partial class RemovedActivityTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,28 +24,6 @@ namespace TechnicalServiceTask.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TechnicalServiceTask.Data.Activity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TechnicalServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TechnicalServiceId");
-
-                    b.ToTable("Activities");
-                });
 
             modelBuilder.Entity("TechnicalServiceTask.Data.Block", b =>
                 {
@@ -65,14 +43,9 @@ namespace TechnicalServiceTask.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("TechnicalServiceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasAlternateKey("Code");
-
-                    b.HasIndex("TechnicalServiceId");
 
                     b.ToTable("Blocks");
                 });
@@ -104,14 +77,9 @@ namespace TechnicalServiceTask.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("TechnicalServiceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TechnicalServiceId");
-
-                    b.ToTable("ResponsiblePersons");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("TechnicalServiceTask.Data.System", b =>
@@ -135,16 +103,11 @@ namespace TechnicalServiceTask.Migrations
                     b.Property<int?>("ParentSystemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TechnicalServiceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasAlternateKey("Code");
 
                     b.HasIndex("ParentSystemId");
-
-                    b.HasIndex("TechnicalServiceId");
 
                     b.ToTable("Systems");
                 });
@@ -157,7 +120,25 @@ namespace TechnicalServiceTask.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BlockIds")
+                    b.Property<int>("ApprovePersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApprovePersonNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConfirmPersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConfirmPersonNames")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CreatePersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatePersonNames")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
@@ -168,15 +149,16 @@ namespace TechnicalServiceTask.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
-                    b.Property<int>("EmployeeIds")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("SystemIds")
+                    b.Property<int>("VerifyPersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VerifyPersonNames")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -235,38 +217,11 @@ namespace TechnicalServiceTask.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TechnicalServiceTask.Data.Activity", b =>
-                {
-                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
-                        .WithMany("Activities")
-                        .HasForeignKey("TechnicalServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TechnicalServiceTask.Data.Block", b =>
-                {
-                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
-                        .WithMany("Blocks")
-                        .HasForeignKey("TechnicalServiceId");
-                });
-
-            modelBuilder.Entity("TechnicalServiceTask.Data.Employee", b =>
-                {
-                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("TechnicalServiceId");
-                });
-
             modelBuilder.Entity("TechnicalServiceTask.Data.System", b =>
                 {
                     b.HasOne("TechnicalServiceTask.Data.System", "ParentSystem")
                         .WithMany()
                         .HasForeignKey("ParentSystemId");
-
-                    b.HasOne("TechnicalServiceTask.Data.TechnicalService", null)
-                        .WithMany("Systems")
-                        .HasForeignKey("TechnicalServiceId");
 
                     b.Navigation("ParentSystem");
                 });
@@ -311,14 +266,6 @@ namespace TechnicalServiceTask.Migrations
 
             modelBuilder.Entity("TechnicalServiceTask.Data.TechnicalService", b =>
                 {
-                    b.Navigation("Activities");
-
-                    b.Navigation("Blocks");
-
-                    b.Navigation("Employees");
-
-                    b.Navigation("Systems");
-
                     b.Navigation("TechnicalServiceBlocks");
 
                     b.Navigation("TechnicalServiceSystems");

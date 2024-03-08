@@ -4,7 +4,6 @@ namespace TechnicalServiceTask.Data
 {
     public class Employee
     {
-        //  [JsonIgnore]
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }

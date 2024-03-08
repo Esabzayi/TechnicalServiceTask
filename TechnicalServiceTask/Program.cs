@@ -67,11 +67,11 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddDbContext<AppEntity>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-    });
+//builder.Services.AddControllers()
+//    .AddJsonOptions(options =>
+//    {
+//        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+//    });
 
 
 builder.Services.AddScoped<BaseService>();

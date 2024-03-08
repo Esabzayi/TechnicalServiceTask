@@ -10,6 +10,5 @@ namespace TechnicalServiceTask.Data
         public int? ParentSystemId { get; set; }
         public System? ParentSystem { get; set; }
 
-       // public ICollection<TechnicalServiceSystem>? TechnicalServiceSystems { get; set; }
     }
 }

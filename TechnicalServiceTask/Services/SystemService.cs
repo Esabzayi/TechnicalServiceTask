@@ -10,7 +10,6 @@ namespace TechnicalServiceTask.Services
         public SystemService(AppEntity dbContext) : base(dbContext)
         {
         }
-
         public async Task<IEnumerable<SystemViewModel>> GetSystemsViewModels()
         {
             var systems = await _dbContext.Systems.ToListAsync();

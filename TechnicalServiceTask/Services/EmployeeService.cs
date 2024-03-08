@@ -13,7 +13,7 @@ namespace TechnicalServiceTask.Services
 
         public async Task<IEnumerable<EmployeeViewModel>> GetResponsiblePersonsViewModels()
         {
-            var employees = await _dbContext.ResponsiblePersons.ToListAsync();
+            var employees = await _dbContext.Employees.ToListAsync();
             return employees.Select(e => new EmployeeViewModel
             {
                 Id = e.Id,
@@ -26,7 +26,7 @@ namespace TechnicalServiceTask.Services
 
         public async Task<EmployeeViewModel> GetResponsiblePersonViewModelById(int id)
         {
-            var employee = await _dbContext.ResponsiblePersons.FindAsync(id);
+            var employee = await _dbContext.Employees.FindAsync(id);
 
             if (employee == null)
                 return null;
@@ -44,14 +44,13 @@ namespace TechnicalServiceTask.Services
         {
             var employeeEntity = new Employee
             {
-                //Id= employeeViewModel.Id,
                 FirstName = employeeViewModel.FirstName,
                 Surname = employeeViewModel.Surname,
                 LastName = employeeViewModel.LastName,
                 PIN = employeeViewModel.PIN
             };
 
-            _dbContext.ResponsiblePersons.Add(employeeEntity);
+            _dbContext.Employees.Add(employeeEntity);
             await _dbContext.SaveChangesAsync();
 
             return new EmployeeViewModel
@@ -66,7 +65,7 @@ namespace TechnicalServiceTask.Services
 
         public async Task UpdateResponsiblePerson(int id, EmployeeViewModel employeeViewModel)
         {
-            var employeeEntity = await _dbContext.ResponsiblePersons.FindAsync(id);
+            var employeeEntity = await _dbContext.Employees.FindAsync(id);
 
             if (employeeEntity == null)
                 throw new NotFoundException("Responsible person not found");
@@ -81,12 +80,12 @@ namespace TechnicalServiceTask.Services
 
         public async Task DeleteResponsiblePerson(int id)
         {
-            var employeeEntity = await _dbContext.ResponsiblePersons.FindAsync(id);
+            var employeeEntity = await _dbContext.Employees.FindAsync(id);
 
             if (employeeEntity == null)
                 throw new NotFoundException("Responsible person not found");
 
-            _dbContext.ResponsiblePersons.Remove(employeeEntity);
+            _dbContext.Employees.Remove(employeeEntity);
             await _dbContext.SaveChangesAsync();
         }
     }
