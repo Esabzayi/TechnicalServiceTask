@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicalServiceTask.Data;
 
@@ -11,9 +12,11 @@ using TechnicalServiceTask.Data;
 namespace TechnicalServiceTask.Migrations
 {
     [DbContext(typeof(AppEntity))]
-    partial class AppEntityModelSnapshot : ModelSnapshot
+    [Migration("20240314044005_AddedForeignKeyBetweenEmployeeAndTechnicalService")]
+    partial class AddedForeignKeyBetweenEmployeeAndTechnicalService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,8 +70,7 @@ namespace TechnicalServiceTask.Migrations
 
                     b.Property<string>("PIN")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -123,24 +125,21 @@ namespace TechnicalServiceTask.Migrations
 
                     b.Property<string>("ApprovePersonNames")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ConfirmPersonId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConfirmPersonNames")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CreatePersonId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatePersonNames")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
@@ -160,8 +159,7 @@ namespace TechnicalServiceTask.Migrations
 
                     b.Property<string>("VerifyPersonNames")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

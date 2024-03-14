@@ -9,5 +9,18 @@ namespace TechnicalServiceTask.Data
         public string Surname { get; set; }
         public string LastName { get; set; }
         public string PIN { get; set; }
+
+
+        [JsonIgnore]
+        public ICollection<TechnicalService> CreatedTechnicalServices { get; set; }
+
+        [JsonIgnore]
+        public ICollection<TechnicalService> ConfirmedTechnicalServices { get; set; }
+
+        [JsonIgnore]
+        public ICollection<TechnicalService> ApprovedTechnicalServices { get; set; }
+
+        [JsonIgnore]
+        public ICollection<TechnicalService> VerifiedTechnicalServices { get; set; }
     }
 }

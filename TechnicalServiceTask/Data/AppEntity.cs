@@ -11,7 +11,7 @@ namespace TechnicalServiceTask.Data
         public DbSet<Block> Blocks { get; set; }
         public DbSet<System> Systems { get; set; }
         public DbSet<Employee> Employees { get; set; }
-     
+
 
         public AppEntity(DbContextOptions<AppEntity> options) : base(options)
         {
@@ -77,7 +77,7 @@ namespace TechnicalServiceTask.Data
 
             modelBuilder.Entity<Employee>()
                 .Property(rp => rp.PIN)
-                .IsRequired();        
+                .IsRequired();
 
             modelBuilder.Entity<TechnicalServiceBlock>()
        .HasKey(tsb => new { tsb.TechnicalServiceId, tsb.BlockId });
@@ -95,7 +95,64 @@ namespace TechnicalServiceTask.Data
                 .WithMany(ts => ts.TechnicalServiceSystems)
                 .HasForeignKey(tss => tss.TechnicalServiceId);
 
-           
+
+            modelBuilder.Entity<TechnicalService>()
+               .HasOne(ts => ts.CreatePerson)
+               .WithMany(emp => emp.CreatedTechnicalServices)
+               .HasForeignKey(ts => ts.CreatePersonId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TechnicalService>()
+                .HasOne(ts => ts.ConfirmPerson)
+                .WithMany(emp => emp.ConfirmedTechnicalServices)
+                .HasForeignKey(ts => ts.ConfirmPersonId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TechnicalService>()
+                .HasOne(ts => ts.ApprovePerson)
+                .WithMany(emp => emp.ApprovedTechnicalServices)
+                .HasForeignKey(ts => ts.ApprovePersonId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TechnicalService>()
+                .HasOne(ts => ts.VerifyPerson)
+                .WithMany(emp => emp.VerifiedTechnicalServices)
+                .HasForeignKey(ts => ts.VerifyPersonId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TechnicalService>()
+                 .Property(ts => ts.CreatePersonNames)
+                 .HasMaxLength(300);
+
+            modelBuilder.Entity<TechnicalService>()
+                .Property(ts => ts.ConfirmPersonNames)
+                .HasMaxLength(300);
+
+            modelBuilder.Entity<TechnicalService>()
+                .Property(ts => ts.ApprovePersonNames)
+                .HasMaxLength(300);
+
+            modelBuilder.Entity<TechnicalService>()
+                .Property(ts => ts.VerifyPersonNames)
+                .HasMaxLength(300);
+
+            modelBuilder.Entity<Employee>()
+                .Property(ts => ts.PIN)
+                .HasMaxLength(10);
+
+            modelBuilder.Entity<Employee>()
+               .Property(ts => ts.FirstName)
+               .HasMaxLength(100);
+
+            modelBuilder.Entity<Employee>()
+              .Property(ts => ts.LastName)
+              .HasMaxLength(100);
+
+            modelBuilder.Entity<Employee>()
+              .Property(ts => ts.Surname)
+              .HasMaxLength(100);
+
+
         }
     }
 }

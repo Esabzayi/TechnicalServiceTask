@@ -18,6 +18,18 @@ namespace TechnicalServiceTask.Data
         public int VerifyPersonId { get; set; }
         public string VerifyPersonNames { get; set; }
 
+        [JsonIgnore]
+        public Employee CreatePerson { get; set; }
+
+        [JsonIgnore]
+        public Employee ConfirmPerson { get; set; }
+
+        [JsonIgnore]
+        public Employee ApprovePerson { get; set; }
+
+        [JsonIgnore]
+        public Employee VerifyPerson { get; set; }
+
         public ICollection<TechnicalServiceBlock>? TechnicalServiceBlocks { get; set; }
         public ICollection<TechnicalServiceSystem>? TechnicalServiceSystems { get; set; }
     }
