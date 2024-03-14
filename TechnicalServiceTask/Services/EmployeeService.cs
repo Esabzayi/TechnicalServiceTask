@@ -70,12 +70,31 @@ namespace TechnicalServiceTask.Services
             if (employeeEntity == null)
                 throw new NotFoundException("Responsible person not found");
 
-            employeeEntity.FirstName = employeeViewModel.FirstName;
-            employeeEntity.Surname = employeeViewModel.Surname;
-            employeeEntity.LastName = employeeViewModel.LastName;
-            employeeEntity.PIN = employeeViewModel.PIN;
+            string newFullName = $"{employeeEntity.FirstName} {employeeEntity.LastName}";
 
-            await _dbContext.SaveChangesAsync();
+            
+            bool nameUsedInTechnicalService = await _dbContext.TechnicalServices
+                .AnyAsync(ts =>
+                    ts.CreatePersonNames.Contains(newFullName) ||
+                    ts.ConfirmPersonNames.Contains(newFullName) ||
+                    ts.ApprovePersonNames.Contains(newFullName) ||
+                    ts.VerifyPersonNames.Contains(newFullName)
+                );
+
+            if (nameUsedInTechnicalService)
+            {
+                throw new InvalidOperationException("Cannot change name. It's been used in Technical Service.");
+            }
+            else
+            {
+                employeeEntity.FirstName = employeeViewModel.FirstName;
+                employeeEntity.Surname = employeeViewModel.Surname;
+                employeeEntity.LastName = employeeViewModel.LastName;
+                employeeEntity.PIN = employeeViewModel.PIN;
+
+                await _dbContext.SaveChangesAsync();
+            }
+           
         }
 
         public async Task DeleteResponsiblePerson(int id)

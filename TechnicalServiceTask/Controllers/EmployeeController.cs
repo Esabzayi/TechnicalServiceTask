@@ -4,12 +4,12 @@ using TechnicalServiceTask.Models;
 using TechnicalServiceTask.Services;
 
 [ApiController]
-[Route("api/responsiblepersons")]
-public class ResponsiblePersonsController : BaseController
+[Route("api/employee")]
+public class EmployeeController : BaseController
 {
     private readonly EmployeeService _employeeService;
 
-    public ResponsiblePersonsController(BaseService baseService, EmployeeService employeeService) : base(baseService)
+    public EmployeeController(BaseService baseService, EmployeeService employeeService) : base(baseService)
     {
         _employeeService = employeeService;
     }
