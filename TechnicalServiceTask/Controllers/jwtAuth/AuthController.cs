@@ -10,7 +10,7 @@ using TechnicalServiceTask.Models;
 
 namespace TechnicalServiceTask.Controllers.jwtAuth
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace TechnicalServiceTask.Controllers.jwtAuth
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserViewModel model)
+        public async Task<IActionResult> Register([FromBody] UserRegisterModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +42,7 @@ namespace TechnicalServiceTask.Controllers.jwtAuth
             {
                 Username = model.Username,
                 PasswordHash = passwordHash,
-                // Add other properties as needed
+               Email = model.Email
             };
 
             _context.Users.Add(newUser);
@@ -55,7 +55,7 @@ namespace TechnicalServiceTask.Controllers.jwtAuth
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserViewModel model)
+        public async Task<IActionResult> Login([FromBody] UserLoginModel model)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == model.Username);
 

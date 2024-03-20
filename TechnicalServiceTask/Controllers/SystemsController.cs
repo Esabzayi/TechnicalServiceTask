@@ -48,7 +48,7 @@ public class SystemsController : BaseController
         await _systemService.UpdateSystem(id, systemViewModel);
         return NoContent();
     }
-
+    
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSystem(int id)
     {

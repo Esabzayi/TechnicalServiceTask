@@ -4,7 +4,7 @@ using TechnicalServiceTask.Models;
 using TechnicalServiceTask.Services;
 
 [ApiController]
-[Route("api/employee")]
+[Route("api/employees")]
 public class EmployeeController : BaseController
 {
     private readonly EmployeeService _employeeService;
