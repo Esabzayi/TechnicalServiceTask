@@ -2,7 +2,7 @@
 
 namespace TechnicalServiceTask.Models
 {
-    public class UserLoginModel
+    public class UserLoginViewModel
     {
         [Required]
         public string Username { get; set; }

@@ -2,7 +2,7 @@
 
 namespace TechnicalServiceTask.Models
 {
-    public class UserRegisterModel
+    public class UserRegisterViewModel
     {
         [EmailAddress]
         public string Email { get; set; }

@@ -23,7 +23,7 @@ namespace TechnicalServiceTask.Controllers.jwtAuth
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegisterModel model)
+        public async Task<IActionResult> Register([FromBody] UserRegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace TechnicalServiceTask.Controllers.jwtAuth
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginModel model)
+        public async Task<IActionResult> Login([FromBody] UserLoginViewModel model)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == model.Username);
 
