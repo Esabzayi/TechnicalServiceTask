@@ -4,7 +4,7 @@ using TechnicalServiceTask.Models;
 using TechnicalServiceTask.Services;
 
 [ApiController]
-[Route("api/blocks")]
+[Route("blocks")]
 public class BlocksController : BaseController
 {
     private readonly BlockService _blockService;

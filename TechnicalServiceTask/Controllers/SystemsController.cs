@@ -5,7 +5,7 @@ using TechnicalServiceTask.Services;
 
 
 [ApiController]
-[Route("api/systems")]
+[Route("systems")]
 public class SystemsController : BaseController
 {
     private readonly SystemService _systemService;

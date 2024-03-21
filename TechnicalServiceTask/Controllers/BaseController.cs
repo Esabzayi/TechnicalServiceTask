@@ -6,7 +6,7 @@ namespace TechnicalServiceTask.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class BaseController : ControllerBase
     {
         protected readonly BaseService _baseService;

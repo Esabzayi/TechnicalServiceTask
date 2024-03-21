@@ -6,7 +6,7 @@ using TechnicalServiceTask.Models;
 using TechnicalServiceTask.Services;
 
 [ApiController]
-[Route("api/technical-services")]
+[Route("technical-services")]
 public class NewTechnicalServicesController : BaseController
 {
     private readonly TechnicalServiceService _technicalServiceService;
